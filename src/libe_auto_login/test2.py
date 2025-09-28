@@ -1,44 +1,43 @@
-# 練習問題（ノーヒント）
-# 問題
-# 次の条件を満たすクラスを作成してください。
-# 	1.	クラス名は SearchEngineManager とする。
-# 	2.	以下の3つのメソッドを持たせること。
-# 	•	get_browser_options: ブラウザのウィンドウサイズを指定する設定を作成して返す。
-# 	•	start_browser: ブラウザを起動して返す。ログをprintで表示すること。
-# 	•	open_search: 引数で受け取った検索エンジンのURLを開く。ログをprintで表示すること。
-# 	3.	実行例では以下のように動作すること。
-#  これからブラウザを起動します
-# ブラウザを起動できました
-# これから検索エンジンを開きます
-# 検索エンジンを開きました: https://www.google.com
-# 4.	最後に Google と Bing の2つのURLを用意し、クラスを使ってそれぞれのページを開くこと。
+# run_selenium_demo.py
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
-class SearchEngineManager:
-	def open_search(self, url):
-		driver = self.start_browser()
-		print(f"これから検索エンジンを開きます")
-		driver.get(url)
-		print(f"検索エンジンを開きました: {url}")
+def build_chrome():
+    options = Options()
+    options.add_argument("--start-maximized")
+    options.add_experimental_option("detach", True)
+    options.page_load_strategy = "eager"
+    chrome = webdriver.Chrome(options=options)
+    return chrome
 
-	def start_browser(self):
-		service = Service()
-		optns = self.get_browser_options()
-		print(f"これからブラウザを起動します")
-		driver = webdriver.Chrome(service=service, options=optns)
-		print(f"ブラウザを起動できました")
-		return driver
+def open_url(chrome, url, timeout=10):
+    chrome.get(url)
+    WebDriverWait(chrome, timeout).until(
+        EC.presence_of_element_located((By.TAG_NAME, "body"))
+    )
 
-	def get_browser_options(self):
-		optns = Options()
-		optns.add_argument("--window-size=800,800")
-		return optns
+def find_by_id(chrome, value, timeout=10):
+    return WebDriverWait(chrome, timeout).until(
+        EC.presence_of_element_located((By.ID, value))
+    )
 
-google_url ="https://www.google.com/"
-bing_url ="https://www.bing.com/"
+class GetElement:
+    # __init__は使わず、呼び出し時にchromeを渡す形（関数中心の設計を崩さない）
+    def by_id(self, chrome, value, timeout=10):
+        return WebDriverWait(chrome, timeout).until(
+            EC.presence_of_element_located((By.ID, value))
+        )
 
-engine = SearchEngineManager()
-engine.open_search(url = google_url)
-    
+if __name__ == "__main__":
+    chrome = build_chrome()
+    open_url(chrome, "https://www.wikipedia.org/")
+    # ① 関数呼び出し → 変数に代入（推奨パターン）
+    search_box = find_by_id(chrome, "searchInput")
+    # ② 直書き（chrome.find_element(By.ID, value)）の動作例
+    direct_box = chrome.find_element(By.ID, "searchInput")
+    # 触ってみる：検索ボックスに文字を入れる（両方とも同じ要素の参照なのでどちらでも可）
+    search_box.send_keys("Selenium (software)")
