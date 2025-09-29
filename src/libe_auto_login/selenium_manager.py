@@ -4,35 +4,158 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException
 
 class GetElement:
+    def _find(self, chrome:WebDriver, by: str, value: str) -> WebElement:
+        try:
+            print(f"[DEBUG] 要素取得開始\nBy={by}\nValue={value}")
+            elem = chrome.find_element(by, value)
+            print(f"[DEBUG] 要素取得完了\nBy={by}\nValue={value}")
+            return elem
+        
+        except  NoSuchElementException as e:
+            print(f"[ERROR] 要素取得失敗\nBy={by}\nValue={value}\n{e.__class__.__name__}: {e}")
+            raise 
+        
+        except Exception as e:
+            print(f"[ERROR] 想定外、要素取得失敗\nBy={by}\nValue={value}\n{e.__class__.__name__}: {e}")
+            raise 
+        
     def get_by_id(self, chrome: WebDriver, value: str) -> WebElement:
-        try:
-            print(f"要素取得開始: \n{value}" ) 
-            elem = chrome.find_element(By.ID, "username")
-            print(f"要素取得完了: \n{value}") 
-            return elem
-        
-        except  NoSuchElementException as e:
-            print(f"要素取得失敗: \n{e}")
-            raise e
-        
-        except Exception as e:
-            print(f"想定外、要素取得失敗: \n{e}")
-            raise e
-        
+            return self._find(chrome, By.ID, value)
+            
     def get_by_name(self, chrome: WebDriver, value: str) -> WebElement:
-        try:
-            print(f"要素取得開始: \n{value}" ) 
-            elem = chrome.find_element(By.NAME, value)
-            print(f"要素取得完了: \n{value}") 
-            return elem
+            return self._find(chrome, By.NAME, value)
+    
+    def get_by_css(self, chrome: WebDriver, value: str) -> WebElement:
+            return self._find(chrome, By.CSS_SELECTOR, value)
+    
+    def get_by_xpath(self, chrome: WebDriver, value: str) -> WebElement:
+            return self._find(chrome, By.XPATH, value)
+    
+    def get_by_class_name(self, chrome: WebDriver, value: str) -> WebElement:
+            return self._find(chrome, By.CLASS_NAME, value)
         
-        except  NoSuchElementException as e:
-            print(f"要素取得失敗: \n{e}")
-            raise e
+    def get_by_tag_name(self, chrome: WebDriver, value: str) -> WebElement:
+            return self._find(chrome, By.TAG_NAME, value)
         
-        except Exception as e:
-            print(f"想定外、要素取得失敗: \n{e}")
-            raise e
+    def get_by_link_text(self, chrome: WebDriver, value: str) -> WebElement:
+            return self._find(chrome, By.LINK_TEXT, value)
+        
+    def get_by_partial_link_text(self, chrome: WebDriver, value: str) -> WebElement:
+            return self._find(chrome, By.PARTIAL_LINK_TEXT, value)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.remote.webdriver import WebDriver
+# from selenium.webdriver.remote.webelement import WebElement
+# from selenium.common.exceptions import NoSuchElementException
+
+# class GetElement:
+
+#     # プライベートメソッドは慣習としてアンダースコア (_) から始める
+#     def _find(self, chrome: WebDriver, by, value: str) -> WebElement:
+#         # この中に、get_by_idからコピーしたtry/exceptの全ロジックを入れる
+#         # ただし find_element の引数には、By.IDではなく by と value を使う
+#         # elem = chrome.find_element(by, value)  ← これに変わる
+#         pass # 中身はtry/exceptで埋めてください
+# def get_by_id(self, chrome: WebDriver, value: str) -> WebElement:
+#         # self._find に処理を委譲（渡し、結果を受け取る）
+#         # 第一引数に 'By.ID' を渡すのがポイント！
+#         return self._find(chrome, By.ID, value)
+
+#     def get_by_id(self, chrome: WebDriver, value: str) -> WebElement:
+#         try:
+#             print(f"要素取得開始: \n{value}" ) 
+#             elem = chrome.find_element(By.ID, "username")
+# 「value のままでいい？」の答え
+# 	•	OKなケース：呼び出し側で value = "username" のように中身が入っている／関数の引数として "username" が渡ってきて中身が入っている。
+# 	•	NGなケース：value が未定義／空文字 ""／違う属性の値（id で探してるのに name の値を入れてしまう など）。
+# 変数名が value でも locator_value でも何でも構いません。中身が正しいかが勝負です。
+#             print(f"要素取得完了: \n{value}") 
+#             return elem
+        
+#         except  NoSuchElementException as e:
+#             print(f"要素取得失敗: \n{e}")
+#             raise e
+        
+#         except Exception as e:
+#             print(f"想定外、要素取得失敗: \n{e}")
+#             raise e
+        
+#     def get_by_name(self, chrome: WebDriver, value: str) -> WebElement:
+#         try:
+#             print(f"要素取得開始: \n{value}" ) 
+#             elem = chrome.find_element(By.NAME, value)
+#             print(f"要素取得完了: \n{value}") 
+#             return elem
+        
+#         except  NoSuchElementException as e:
+#             print(f"要素取得失敗: \n{e}")
+#             raise e
+        
+#         except Exception as e:
+#             print(f"想定外、要素取得失敗: \n{e}")
+#             raise e
+        
+        
+        
+        
+        
+        
+        
         
 
         # def get_by_id(self, chrome: WebDriver, value: str) -> WebElement:
