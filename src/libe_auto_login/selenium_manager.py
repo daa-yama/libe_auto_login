@@ -359,6 +359,18 @@ class GetElement:
 
 
 
+# GetElement
+
+
+
+
+
+
+
+
+
+
+
 
 # #chatGPTが出したコード
 
@@ -512,3 +524,492 @@ class GetElement:
 #         except NoSuchElementException as e:
 #             print(f"要素取得失敗: \n{e}")
 #             raise e
+
+
+
+
+# ActionElement
+# GEMINIが出したコード
+
+
+# 💻 統合された実装コード (selenium_manager.py)
+# あなたの学習段階ではloggerを使わずprintで代用する、という指示に基づき、loggerクラスの代わりとなる簡単なLoggerクラスを定義し、そのメソッド内でprintを使う形で実装します。
+
+# 📄 selenium_manager.py (動作確認用Logger代用版)
+# Python
+
+# from selenium.webdriver.remote.webdriver import WebDriver
+# from selenium.webdriver.remote.webelement import WebElement
+# from selenium.common.exceptions import ElementClickInterceptedException, ElementNotInteractableException
+# from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
+# import sys
+# import time
+
+# # ----------------------------------------------------
+# # ⚠️ 注意: 本来はloggingモジュールを使うが、今回はprintで代用
+# # ----------------------------------------------------
+# class SimpleLogger:
+#     """loggerの代わりとしてprintを行うクラス"""
+#     def debug(self, msg):
+#         print(f"[DEBUG] {msg}")
+
+#     def error(self, msg):
+#         print(f"[ERROR] {msg}", file=sys.stderr)
+# # ----------------------------------------------------
+
+# class ActionElement:
+#     """Seleniumの要素操作専用クラス"""
+
+#     def __init__(self, logger):
+#         """
+#         初期化メソッド
+#         引数: logger（logging.Logger）
+#         """
+#         self.logger = logger
+#         # Chromeは保持しない。(GetElement側で使用するため)
+#         # self.logger.debug("ActionElementクラス 初期化完了") # 通常はここにログを入れる
+
+# # --- メソッド（必ずこの順序で定義）---
+
+#     def send_keys(self, element: WebElement, text: str) -> None:
+#         """指定の要素にテキストを入力する"""
+#         try:
+#             self.logger.debug("入力開始")
+#             element.send_keys(text)
+#             self.logger.debug(f"入力完了: {text}")
+#         except Exception as e:
+#             self.logger.error(f"操作失敗: {e}")
+#             raise
+
+#     def click(self, element: WebElement) -> None:
+#         """指定の要素をクリックする"""
+#         try:
+#             self.logger.debug("クリック開始")
+#             element.click()
+#             self.logger.debug("クリック完了")
+#         except Exception as e:
+#             self.logger.error(f"操作失敗: {e}")
+#             raise
+
+#     def clear_and_send_keys(self, element: WebElement, text: str) -> None:
+#         """要素をクリアしてからテキストを入力する"""
+#         try:
+#             self.logger.debug("入力クリア＆開始")
+#             element.clear()
+#             element.send_keys(text)
+#             self.logger.debug(f"入力完了: {text}")
+#         except Exception as e:
+#             self.logger.error(f"操作失敗: {e}")
+#             raise
+
+#     def safe_click(self, element: WebElement, chrome: WebDriver) -> None:
+#         """
+#         通常クリックを試行し、失敗した場合にJavaScriptでクリックする
+#         :param element: 対象のWebElement
+#         :param chrome: WebDriverインスタンス（JavaScript実行用）
+#         """
+#         self.logger.debug("クリック開始")
+#         try:
+#             element.click()
+#         except (ElementClickInterceptedException, ElementNotInteractableException) as e:
+#             # クリックが邪魔された場合や操作不能な場合、JavaScriptでフォールバック
+#             self.logger.debug(f"クリック失敗（エラー: {type(e).__name__}）。JavaScriptで再試行。")
+#             try:
+#                 # JavaScriptでクリックする
+#                 chrome.execute_script("arguments[0].click();", element)
+#             except Exception as js_e:
+#                 self.logger.error(f"JavaScriptクリック失敗: {js_e}")
+#                 raise
+#         except Exception as e:
+#             # その他の予期せぬエラー
+#             self.logger.error(f"操作失敗: {e}")
+#             raise
+        
+#         self.logger.debug("クリック完了")
+
+
+# # ----------------------------------------------------
+# # テスト実施要件（if __name__ == "__main__": ブロック）
+# # ----------------------------------------------------
+# if __name__ == "__main__":
+    
+#     # 実際にはGetElementクラスも必要だが、ここでは要素を直接取得する処理で代用
+    
+#     # 1. WebDriverの起動
+#     options = Options()
+#     # options.add_argument('--headless') # ヘッドレスモード（画面非表示）で実行したい場合はコメントアウトを外す
+#     try:
+#         driver = webdriver.Chrome(options=options) # WebDriver（ブラウザ）を起動
+#     except Exception as e:
+#         print(f"WebDriverの起動に失敗しました。Chromeドライバーのパスやバージョンを確認してください: {e}", file=sys.stderr)
+#         sys.exit(1)
+
+#     # 簡易ロガー（print代用）をインスタンス化
+#     my_logger = SimpleLogger() 
+    
+#     # 2. ActionElementクラスをインスタンス化（ここで__init__が呼ばれる）
+#     action_element = ActionElement(logger=my_logger) # action_element変数にクラスの実体（インスタンス）を代入
+    
+#     # 3. 対象URLへアクセス
+#     target_url = "https://libecity.com/signin"
+#     driver.get(target_url)
+#     time.sleep(2) # 読み込み待ち
+
+#     try:
+#         # 要素の特定（ここではIDで直接取得）
+#         # 「リベのログインサイトのID入力欄」
+#         id_input_locator = "id_username" # サイトの要素によって変更の可能性あり
+#         username_element = driver.find_element("id", id_input_locator)
+        
+#         # 「リベのログインサイトのログインボタン」
+#         login_button_locator = "js-signin-button" # サイトの要素によって変更の可能性あり
+#         login_button_element = driver.find_element("id", login_button_locator)
+        
+#         test_text = "test_user_001"
+        
+#         my_logger.debug("--- send_keysのテスト開始 ---")
+#         # 4. ActionElementのメソッドで「ID入力欄」に文字列を入力
+#         action_element.send_keys(element=username_element, text=test_text)
+#         my_logger.debug("--- send_keysのテスト完了 ---")
+        
+#         time.sleep(1)
+        
+#         my_logger.debug("--- clear_and_send_keysのテスト開始 ---")
+#         # 5. ActionElementのメソッドで「ID入力欄」をクリアして再入力
+#         action_element.clear_and_send_keys(element=username_element, text="retest_002")
+#         my_logger.debug("--- clear_and_send_keysのテスト完了 ---")
+
+#         time.sleep(1)
+        
+#         my_logger.debug("--- clickのテスト開始 ---")
+#         # 6. ActionElementのメソッドで「ログインボタン」をクリック
+#         # ※ 実際にはIDやパスワードがないためエラー画面に遷移します
+#         action_element.click(element=login_button_element)
+#         my_logger.debug("--- clickのテスト完了 ---")
+
+#         # safe_clickのテストはフォールバックエラーを起こす環境構築が複雑なため割愛
+
+#     except Exception as e:
+#         my_logger.error(f"テスト中にエラーが発生しました: {e}")
+#     finally:
+#         # テスト終了
+#         time.sleep(3)
+#         driver.quit() # ブラウザを閉じる
+
+
+
+# 🛠️ 修正版コード：__init__不使用とprint代用
+# __init__を使わない場合、logger（またはその代わりのSimpleLogger）は各メソッドを呼び出すたびに引数として渡す必要があります。
+
+# 📄 selenium_manager.py (修正版)
+# Python
+
+# from selenium.webdriver.remote.webdriver import WebDriver
+# from selenium.webdriver.remote.webelement import WebElement
+# from selenium.common.exceptions import ElementClickInterceptedException, ElementNotInteractableException
+# from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
+# import sys
+# import time
+
+# # ----------------------------------------------------
+# # 💡 変更点 1: loggerの代わりとしてprintを行うクラス (SimpleLogger)
+# # ----------------------------------------------------
+# class SimpleLogger:
+#     """loggerの代わりとしてprintを行うクラス"""
+#     def debug(self, msg):
+#         print(f"[DEBUG] {msg}")
+
+#     def error(self, msg):
+#         print(f"[ERROR] {msg}", file=sys.stderr)
+# # ----------------------------------------------------
+
+# class ActionElement:
+#     """Seleniumの要素操作専用クラス (init不使用版)"""
+
+#     # 💡 変更点 2: __init__ メソッドを削除
+#     # 初期化が不要になったため、このクラスは「単なる機能のまとまり」として使われる
+#     pass 
+    
+# # --- メソッド（必ずこの順序で定義）---
+# # 💡 変更点 3: 全メソッドの引数に logger (SimpleLogger) を追加
+
+#     def send_keys(self, element: WebElement, text: str, logger: SimpleLogger) -> None:
+#         """指定の要素にテキストを入力する"""
+#         try:
+#             logger.debug("入力開始")
+#             element.send_keys(text)
+#             logger.debug(f"入力完了: {text}")
+#         except Exception as e:
+#             logger.error(f"操作失敗: {e}")
+#             raise
+
+#     def click(self, element: WebElement, logger: SimpleLogger) -> None:
+#         """指定の要素をクリックする"""
+#         try:
+#             logger.debug("クリック開始")
+#             element.click()
+#             logger.debug("クリック完了")
+#         except Exception as e:
+#             logger.error(f"操作失敗: {e}")
+#             raise
+
+#     def clear_and_send_keys(self, element: WebElement, text: str, logger: SimpleLogger) -> None:
+#         """要素をクリアしてからテキストを入力する"""
+#         try:
+#             logger.debug("入力クリア＆開始")
+#             element.clear()
+#             element.send_keys(text)
+#             logger.debug(f"入力完了: {text}")
+#         except Exception as e:
+#             logger.error(f"操作失敗: {e}")
+#             raise
+
+#     def safe_click(self, element: WebElement, chrome: WebDriver, logger: SimpleLogger) -> None:
+#         """
+#         通常クリックを試行し、失敗した場合にJavaScriptでクリックする
+#         :param element: 対象のWebElement
+#         :param chrome: WebDriverインスタンス（JavaScript実行用）
+#         :param logger: SimpleLoggerインスタンス
+#         """
+#         logger.debug("クリック開始")
+#         try:
+#             element.click()
+#         except (ElementClickInterceptedException, ElementNotInteractableException) as e:
+#             # クリックが邪魔された場合や操作不能な場合、JavaScriptでフォールバック
+#             logger.debug(f"クリック失敗（エラー: {type(e).__name__}）。JavaScriptで再試行。")
+#             try:
+#                 # JavaScriptでクリックする
+#                 chrome.execute_script("arguments[0].click();", element)
+#             except Exception as js_e:
+#                 logger.error(f"JavaScriptクリック失敗: {js_e}")
+#                 raise
+#         except Exception as e:
+#             # その他の予期せぬエラー
+#             logger.error(f"操作失敗: {e}")
+#             raise
+        
+#         logger.debug("クリック完了")
+
+
+# # ----------------------------------------------------
+# # テスト実施要件（if __name__ == "__main__": ブロック）
+# # ----------------------------------------------------
+# if __name__ == "__main__":
+    
+#     options = Options()
+#     try:
+#         driver = webdriver.Chrome(options=options)
+#     except Exception as e:
+#         print(f"WebDriverの起動に失敗しました。Chromeドライバーのパスやバージョンを確認してください: {e}", file=sys.stderr)
+#         sys.exit(1)
+
+#     # 簡易ロガー（print代用）をインスタンス化
+#     my_logger = SimpleLogger() 
+    
+#     # 💡 変更点 4: ActionElementのインスタンス化
+#     # __init__がないため、引数は不要。ただし、クラスの実体（インスタンス）は作る必要がある。
+#     action_element = ActionElement()
+    
+#     target_url = "https://libecity.com/signin"
+#     driver.get(target_url)
+#     time.sleep(2)
+
+#     try:
+#         id_input_locator = "id_username" # ID入力欄のロケーター
+#         username_element = driver.find_element("id", id_input_locator)
+        
+#         login_button_locator = "js-signin-button" # ログインボタンのロケーター
+#         login_button_element = driver.find_element("id", login_button_locator)
+        
+#         test_text = "test_user_001"
+        
+#         my_logger.debug("--- send_keysのテスト開始 ---")
+#         # 💡 変更点 5: メソッド呼び出し時に my_logger を引数として渡す
+#         action_element.send_keys(element=username_element, text=test_text, logger=my_logger)
+#         my_logger.debug("--- send_keysのテスト完了 ---")
+        
+#         time.sleep(1)
+        
+#         my_logger.debug("--- clear_and_send_keysのテスト開始 ---")
+#         # 💡 変更点 5: メソッド呼び出し時に my_logger を引数として渡す
+#         action_element.clear_and_send_keys(element=username_element, text="retest_002", logger=my_logger)
+#         my_logger.debug("--- clear_and_send_keysのテスト完了 ---")
+
+#         time.sleep(1)
+        
+#         my_logger.debug("--- clickのテスト開始 ---")
+#         # 💡 変更点 5: メソッド呼び出し時に my_logger を引数として渡す
+#         action_element.click(element=login_button_element, logger=my_logger)
+#         my_logger.debug("--- clickのテスト完了 ---")
+        
+#         # safe_clickのテストの呼び出し例（loggerとdriverも渡す）
+#         # action_element.safe_click(element=login_button_element, chrome=driver, logger=my_logger)
+
+
+#     except Exception as e:
+#         my_logger.error(f"テスト中にエラーが発生しました: {e}")
+#     finally:
+#         time.sleep(3)
+#         driver.quit()
+
+
+
+# ChatGPTが出したコード
+# from __future__ import annotations
+
+# import time
+# from typing import Iterable, Tuple
+
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.remote.webdriver import WebDriver
+# from selenium.webdriver.remote.webelement import WebElement
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
+# from selenium.common.exceptions import (
+#     TimeoutException,
+#     WebDriverException,
+#     ElementClickInterceptedException,
+#     ElementNotInteractableException,
+# )
+
+
+# class ActionElement:
+#     """要素に対する操作だけを担当するクラス（printでログ出力する簡易版）。"""
+
+#     def __init__(self) -> None:
+#         """この学習版では logger を使わないので、特に保持する状態はありません。"""
+#         pass
+
+#     def send_keys(self, element: WebElement, text: str) -> None:
+#         """指定要素に文字列を入力する。操作前後でログを出す。"""
+#         try:
+#             print("入力開始")
+#             element.send_keys(text)
+#             print(f"入力完了: {text}")
+#         except Exception as e:  # 予期しない例外も含めて必ず伝播
+#             print(f"操作失敗: {e}")
+#             raise
+
+#     def click(self, element: WebElement) -> None:
+#         """指定要素をクリックする。操作前後でログを出す。"""
+#         try:
+#             print("クリック開始")
+#             element.click()
+#             print("クリック完了")
+#         except Exception as e:
+#             print(f"操作失敗: {e}")
+#             raise
+
+#     def clear_and_send_keys(self, element: WebElement, text: str) -> None:
+#         """一度クリアしてから入力する。操作前後でログを出す。"""
+#         try:
+#             print("入力クリア＆開始")
+#             element.clear()
+#             element.send_keys(text)
+#             print(f"入力完了: {text}")
+#         except Exception as e:
+#             print(f"操作失敗: {e}")
+#             raise
+
+#     def safe_click(self, element: WebElement, chrome: WebDriver) -> None:
+#         """通常クリックが妨げられたら JS クリックでフォールバックする安全版。"""
+#         try:
+#             print("クリック開始")
+#             try:
+#                 element.click()
+#             except (ElementClickInterceptedException, ElementNotInteractableException):
+#                 print("通常クリック不可 → JavaScriptクリックでフォールバック")
+#                 chrome.execute_script("arguments[0].click();", element)
+#             print("クリック完了")
+#         except Exception as e:
+#             print(f"操作失敗: {e}")
+#             raise
+
+
+# # --- 補助関数（学習用）: 候補ロケータを順に試して最初に見つかった要素を返す ---
+
+# def find_first(chrome: WebDriver, candidates: Iterable[Tuple[str, str]], timeout: int = 10) -> WebElement:
+#     last_error: Exception | None = None
+#     for by, value in candidates:
+#         try:
+#             return WebDriverWait(chrome, timeout).until(
+#                 EC.presence_of_element_located((by, value))
+#             )
+#         except Exception as e:
+#             last_error = e
+#     # どれも見つからなかった場合は最後のエラーを再送出
+#     if last_error:
+#         raise last_error
+#     raise TimeoutException("No candidates matched.")
+
+
+# # --- ロケータ候補（対象ページのDOM変化に多少強いように複数用意） ---
+
+# ID_INPUT_CANDIDATES = [
+#     (By.ID, "email"),
+#     (By.NAME, "email"),
+#     (By.CSS_SELECTOR, "input[type='email']"),
+#     (By.ID, "username"),
+#     (By.NAME, "username"),
+#     (By.CSS_SELECTOR, "input[autocomplete='username']"),
+#     (By.CSS_SELECTOR, "input[type='text']"),
+# ]
+
+# LOGIN_BUTTON_CANDIDATES = [
+#     (By.CSS_SELECTOR, "button[type='submit']"),
+#     (By.XPATH, "//button[contains(., 'ログイン')]")
+#     ,
+#     (By.XPATH, "//button[contains(., 'Login') or contains(., 'Sign in') or contains(., 'サインイン')]")
+#     ,
+#     (By.CSS_SELECTOR, "input[type='submit']"),
+# ]
+
+
+# # --- GetElement が未実装でもテストできるように学習用の簡易版を同名で用意 ---
+# try:
+#     GetElement  # 既にどこかで定義済みならそれを使う
+# except NameError:  # なければ簡易版を定義
+#     class GetElement:
+#         def __init__(self, chrome: WebDriver) -> None:
+#             self.chrome = chrome
+
+#         def first(self, candidates: Iterable[Tuple[str, str]], timeout: int = 10) -> WebElement:
+#             return find_first(self.chrome, candidates, timeout)
+
+
+# # --- 簡易テスト（課題指示どおり末尾に設置） ---
+# if __name__ == "__main__":
+#     # 1) Chrome 起動
+#     chrome: WebDriver = webdriver.Chrome()
+
+#     try:
+#         # 2) 対象ページへ
+#         chrome.get("https://libecity.com/signin")
+
+#         # 3) GetElement を用意
+#         ge = GetElement(chrome)
+
+#         # 4) ID入力欄の取得（候補を順に試す）
+#         id_input: WebElement = ge.first(ID_INPUT_CANDIDATES, timeout=15)
+
+#         # 5) 操作用クラスの用意（print版）
+#         action = ActionElement()
+
+#         # 6) クリアしてから任意の文字列を入力
+#         action.clear_and_send_keys(id_input, "test@example.com")
+
+#         # 7) ログインボタンを取得
+#         login_btn: WebElement = ge.first(LOGIN_BUTTON_CANDIDATES, timeout=15)
+
+#         # 8) 安全クリック（通常→JSフォールバック）
+#         action.safe_click(login_btn, chrome)
+
+#         # 9) 観察用に少し待つ（学習用途）
+#         time.sleep(2)
+
+#     finally:
+#         # 10) 終了
+#         chrome.quit()
