@@ -52,11 +52,7 @@ class GetElement:
     def get_by_partial_link_text(self, chrome: WebDriver, value: str) -> WebElement:
             elem: WebElement = self._find(chrome, By.PARTIAL_LINK_TEXT, value)
             return elem
-    
 
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.common.exceptions import ElementClickInterceptedException, ElementNotInteractableException
 
 class ActionElement:
     """（print版）"""
