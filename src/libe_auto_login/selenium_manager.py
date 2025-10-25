@@ -121,13 +121,17 @@ if __name__ == "__main__":
         ge = GetElement()       
         action = ActionElement()
 
-        id_input = ge.get_by_css(chrome, "input[type='email']")
+        id_input = ge.get_by_css(chrome, "input[type='text']")
         action.clear_and_send_keys(id_input, "test@example.com")
+        
+        password_input = ge.get_by_css(chrome, "input[type='password']")
+        action.clear_and_send_keys(password_input, "test1234")
+
 
         login_btn = ge.get_by_css(chrome, "button[type='submit']")
         action.safe_click(login_btn, chrome)
 
-        time.sleep(5)
+        time.sleep(3)
 
     finally:
         chrome.quit()
