@@ -1,8 +1,12 @@
+import time
+
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementClickInterceptedException, ElementNotInteractableException
+
 
 
 class GetElement:
@@ -89,14 +93,41 @@ class ActionElement:
             raise
 
     def safe_click(self, element: WebElement, chrome: WebDriver) -> None:
+        print("クリック開始")
         try:
-            print("クリック開始")
-            try:
                 element.click()
-            except (ElementClickInterceptedException, ElementNotInteractableException):
-                print("通常クリック不可 → JavaScriptクリックでフォールバック")
+        except (ElementClickInterceptedException, ElementNotInteractableException) as e:
+                print(f"通常クリック不可（エラー種別: {type(e).__name__}）→ JavaScriptクリックでフォールバック")
+        try:
                 chrome.execute_script("arguments[0].click();", element)
-            print("クリック完了")
+        except Exception as js_e:
+                print(f"JavaScriptクリックも失敗: {js_e}")
+                raise
         except Exception as e:
-            print(f"操作失敗: {e}")
-            raise
+                print(f"操作失敗: {e}")
+                raise
+        print("クリック完了")
+        
+        
+        
+
+
+
+if __name__ == "__main__":
+    chrome: WebDriver = webdriver.Chrome()
+    try:
+        chrome.get("https://libecity.com/signin")
+
+        ge = GetElement()       
+        action = ActionElement()
+
+        id_input = ge.get_by_css(chrome, "input[type='email']")
+        action.clear_and_send_keys(id_input, "test@example.com")
+
+        login_btn = ge.get_by_css(chrome, "button[type='submit']")
+        action.safe_click(login_btn, chrome)
+
+        time.sleep(5)
+
+    finally:
+        chrome.quit()
