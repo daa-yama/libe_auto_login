@@ -4,6 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementClickInterceptedException, ElementNotInteractableException
 
@@ -112,26 +114,36 @@ class ActionElement:
         
 
 
-
 if __name__ == "__main__":
     chrome: WebDriver = webdriver.Chrome()
     try:
         chrome.get("https://libecity.com/signin")
 
-        ge = GetElement()       
+        ge = GetElement()
         action = ActionElement()
 
+        # --- 入力欄の取得 ---
         id_input = ge.get_by_css(chrome, "input[type='text']")
         action.clear_and_send_keys(id_input, "test@example.com")
-        
+
         password_input = ge.get_by_css(chrome, "input[type='password']")
         action.clear_and_send_keys(password_input, "test1234")
-
-
-        login_btn = ge.get_by_css(chrome, "button[type='submit']")
+        wait = WebDriverWait(chrome, 10)
+        # --- ログインボタンを取得＆クリック ---
+        login_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']")))
         action.safe_click(login_btn, chrome)
 
-        time.sleep(3)
+        # --- URL変化を待つ：ここが time.sleep(3) の置き換え部分 ---
+        old_url = chrome.current_url  # 現在のURLを記録
+        try:
+            # URLが変わるまで最大10秒待つ（条件が満たされ次第すぐ進む）
+            WebDriverWait(chrome, 10).until(EC.url_changes(old_url))
+            print("[DEBUG] ページ遷移を検出しました。")
+        except:
+            print("[WARNING] ページ遷移が10秒以内に完了しませんでした。")
+
+        # 現在のURLを出力（ログイン後のページを確認）
+        print("[DEBUG] 現在のURL:", chrome.current_url)
 
     finally:
         chrome.quit()
