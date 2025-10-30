@@ -101,11 +101,11 @@ class ActionElement:
                 element.click()
         except (ElementClickInterceptedException, ElementNotInteractableException) as e:
                 print(f"通常クリック不可（エラー種別: {type(e).__name__}）→ JavaScriptクリックでフォールバック")
-        try:
-                chrome.execute_script("arguments[0].click();", element)
-        except Exception as js_e:
-                print(f"JavaScriptクリックも失敗: {js_e}")
-                raise
+                try:
+                        chrome.execute_script("arguments[0].click();", element)
+                except Exception as js_e:
+                        print(f"JavaScriptクリックも失敗: {js_e}")
+                        raise
         except Exception as e:
                 print(f"操作失敗: {e}")
                 raise
