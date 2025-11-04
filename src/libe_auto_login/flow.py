@@ -1,10 +1,14 @@
-from typing import Optional
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium_manager import GetElement, ActionElement
+import time
 import logging
 import os
+from typing import Optional
+
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 from dotenv import load_dotenv
+
+from selenium_manager import GetElement, ActionElement
+
 
 class Flow:
     """フロー統括（print版）。Chromeは外部受領、__init__/flowのみ定義。loggerは今回未使用。"""
@@ -42,4 +46,4 @@ class Flow:
         passwd.send_keys(Keys.ENTER)
 
         print("[Flow] フロー終了")
-
+        time.sleep(5)
