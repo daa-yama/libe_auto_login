@@ -23,13 +23,13 @@ class Main:
             Flow(self.chrome, self.logger).flow()
         except Exception:
             # 例外をスタックトレース付きで出力（ファイルにも保存される）
-            self.logger.exception("[Main] Flow実行中に未処理例外")
+            self.logger.error("[Main] Flow実行中に未処理例外")
         finally:
             try:
                 self.chrome.quit()
                 self.logger.info("[Main] Chromeを終了しました")
             except Exception:
-                self.logger.exception("[Main] Chrome終了処理で例外")
+                self.logger.error("[Main] Chrome終了処理で例外")
 
 
 if __name__ == "__main__":
